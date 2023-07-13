@@ -10,7 +10,17 @@ deploys:
       pullPolicy: IfNotPresent
       tag: "latest"
 
-    serviceAccount:
+    replicaCount: 1 # Optional | default: 1
+
+    resources:   # Optional
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+
+    serviceAccount:   # Optional
       create: true
       name: dummy-sa
 

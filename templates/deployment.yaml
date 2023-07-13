@@ -11,7 +11,7 @@ metadata:
     {{- include "mbcaas.labels" (dict "root" $root "appName" $deploy.name) | nindent 4 }}
 spec:
   {{- if not $deploy.autoscaling }}
-  replicas: {{ default $deploy.replicaCount $default.replicaCount }}
+  replicas: {{ $deploy.replicaCount | default $default.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
@@ -49,7 +49,7 @@ spec:
           {{- end }}
           {{- end }}
           resources:
-            {{- toYaml (default $deploy.resources $default.resources) | nindent 12 }}
+            {{- toYaml ($deploy.resources | default $default.resources) | nindent 12 }}
       {{- with $deploy.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
