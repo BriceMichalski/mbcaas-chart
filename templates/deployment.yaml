@@ -1,38 +1,43 @@
+{{ $root := . }}
+{{ $default := .Values.default }}
+
+{{- range .Values.deploys }}
+{{- $deploy := . -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "mbcaas-chart.fullname" . }}
+  name: {{ include "mbcaas.fullname" $deploy }}
   labels:
-    {{- include "mbcaas-chart.labels" . | nindent 4 }}
+    {{- include "mbcaas.labels" (dict "root" $root "appName" $deploy.name) | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  {{- if not $deploy.autoscaling }}
+  replicas: {{ default $deploy.replicaCount $default.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "mbcaas-chart.selectorLabels" . | nindent 6 }}
+      {{- include "mbcaas.selectorLabels" (dict "root" $root "appName" $deploy.name) | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- with $deploy.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "mbcaas-chart.selectorLabels" . | nindent 8 }}
+        {{- include "mbcaas.selectorLabels" (dict "root" $root "appName" $deploy.name) | nindent 8 }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- with $deploy.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "mbcaas-chart.serviceAccountName" . }}
+      serviceAccountName: {{ include "mbcaas.serviceAccountName" (dict "appName" $deploy.name "serviceAccount" $deploy.serviceAccount )}}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- toYaml $deploy.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ $deploy.name }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+            {{- toYaml $deploy.securityContext | nindent 12 }}
+          image: "{{ $deploy.image.repository }}:{{ $deploy.image.tag }}"
+          imagePullPolicy: {{ $deploy.image.pullPolicy }}
           ports:
             - name: http
               containerPort: 80
@@ -46,16 +51,19 @@ spec:
               path: /
               port: http
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-      {{- with .Values.nodeSelector }}
+            {{- toYaml (default $deploy.resources $default.resources) | nindent 12 }}
+      {{- with $deploy.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- with $deploy.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+      {{- with $deploy.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+---
+{{ include "mbcaas.serviceaccount" (dict "root" $root "default" $default "appName" $deploy.name "serviceAccount" $deploy.serviceAccount)}}
+{{- end }}
