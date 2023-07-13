@@ -6,7 +6,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "mbcaas.fullname" $deploy }}
+  name: {{ include "mbcaas.fullname" (dict "appName" $deploy.name) }}
   labels:
     {{- include "mbcaas.labels" (dict "root" $root "appName" $deploy.name) | nindent 4 }}
 spec:
@@ -38,18 +38,16 @@ spec:
             {{- toYaml $deploy.securityContext | nindent 12 }}
           image: "{{ $deploy.image.repository }}:{{ $deploy.image.tag }}"
           imagePullPolicy: {{ $deploy.image.pullPolicy }}
-          ports:
-            - name: http
-              containerPort: 80
-              protocol: TCP
+          {{- if $deploy.probe -}}
+          {{- with (default $deploy.probe.liveness false) }}
           livenessProbe:
-            httpGet:
-              path: /
-              port: http
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with (default $deploy.probe.readiness false) }}
           readinessProbe:
-            httpGet:
-              path: /
-              port: http
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- end }}
           resources:
             {{- toYaml (default $deploy.resources $default.resources) | nindent 12 }}
       {{- with $deploy.nodeSelector }}
@@ -66,4 +64,8 @@ spec:
       {{- end }}
 ---
 {{ include "mbcaas.serviceaccount" (dict "root" $root "default" $default "appName" $deploy.name "serviceAccount" $deploy.serviceAccount)}}
+---
+{{- if $deploy.service }}
+{{ include "mbcaas.service" (dict "root" $root "default" $default "appName" $deploy.name "service" $deploy.service)}}
+{{- end }}
 {{- end }}

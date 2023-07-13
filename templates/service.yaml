@@ -1,0 +1,25 @@
+{{ define "mbcaas.service" }}
+{{- $root := .root -}}
+{{- $default := .default -}}
+{{- $appName := .appName -}}
+{{ $svc := .service }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ printf "%s-svc" (include "mbcaas.fullname" (dict "appName" $appName)) }}
+  labels:
+    {{- include "mbcaas.labels" (dict "root" $root "appName" $appName) | nindent 4 }}
+spec:
+  type: {{ default $svc.type $default.service.type }}
+  ports:
+    {{- range $svc.ports }}
+    {{- $port := . }}
+    - port: {{ $port.port }}
+      targetPort: {{ $port.port }}
+      protocol: {{ $port.protocol }}
+      name: {{ $port.name }}
+    {{- end }}
+  selector:
+    {{- include "mbcaas.selectorLabels" . | nindent 4 }}
+{{ end }}
