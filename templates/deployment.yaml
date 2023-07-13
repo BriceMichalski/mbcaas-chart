@@ -68,4 +68,9 @@ spec:
 {{- if $deploy.service }}
 {{ include "mbcaas.service" (dict "root" $root "default" $default "appName" $deploy.name "service" $deploy.service)}}
 {{- end }}
+---
+{{- if $deploy.ingress }}
+{{ include "mbcaas.ingress" (dict "root" $root "default" $default "appName" $deploy.name "ingress" $deploy.ingress)}}
+{{- end }}
+---
 {{- end }}

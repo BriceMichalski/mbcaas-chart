@@ -36,7 +36,7 @@ Common labels
 {{- define "mbcaas.labels" -}}
 {{- $root := .root -}}
 {{- $appName := .appName -}}
-helm.sh/chart: mbcaas-chart
+helm.sh/chart: {{ printf "%s-%s" "mbcaas-chart" $root.Chart.Version }}
 {{ include "mbcaas.selectorLabels" (dict "root" $root "appName" $appName ) }}
 app.kubernetes.io/managed-by: {{ $root.Release.Service }}
 {{- end }}

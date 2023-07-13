@@ -1,5 +1,6 @@
 ---
 default:
+  probe: {}
   replicaCount: 1
   resources:
     limits:
@@ -8,48 +9,8 @@ default:
     requests:
       cpu: 100m
       memory: 128Mi
+  service:
+    type: ClusterIP
+    port: 80
 
-
-
-deploys:
-
-  - name: My Super App
-    image:
-      repository: nginx
-      pullPolicy: IfNotPresent
-      tag: ""
-
-    imagePullSecrets: []
-
-    resources:
-      limits:
-        cpu: 100m
-        memory: 128Mi
-      requests:
-        cpu: 100m
-        memory: 128Mi
-
-    replicaCount: 1
-    autoscaling:
-      minReplicas: 1
-      maxReplicas: 100
-      targetCPUUtilizationPercentage: 80
-
-    service:
-      type: ClusterIP
-      port: 80
-
-    ingress:
-      enabled: false
-      admin: false
-      annotations: {}
-      host: foo.mbcaas.com
-
-    serviceAccount:
-      create: true
-      annotations: {}
-      name: ""
-
-    nodeSelector: {}
-    tolerations: []
-    affinity: {}
+deploys: []

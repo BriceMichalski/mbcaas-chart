@@ -2,7 +2,7 @@
 {{- $root := .root -}}
 {{- $default := .default -}}
 {{- $appName := .appName -}}
-{{ $svc := .service }}
+{{- $svc := .service -}}
 
 apiVersion: v1
 kind: Service
@@ -22,4 +22,12 @@ spec:
     {{- end }}
   selector:
     {{- include "mbcaas.selectorLabels" . | nindent 4 }}
+
+
+{{- range $svc.ports }}
+{{- $port := . }}
+---
+
+{{- end }}
+
 {{ end }}

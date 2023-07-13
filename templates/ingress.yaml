@@ -1,0 +1,39 @@
+{{ define "mbcaas.ingress" }}
+{{- $root := .root -}}
+{{- $default := .default -}}
+{{- $appName := .appName -}}
+{{- $ing := .ingress -}}
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ printf "%s-ing" (include "mbcaas.fullname" (dict "appName" $appName)) }}
+  labels:
+    {{- include "mbcaas.labels" (dict "root" $root "appName" $appName) | nindent 4 }}
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    external-dns.alpha.kubernetes.io/target: "ipv4.mbcaas.com"
+    {{- if default $ing.admin false }}
+    traefik.ingress.kubernetes.io/router.middlewares: kube-network-admin-basic-auth@kubernetescrd
+    {{- end }}
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: {{ $ing.host | quote }}
+      http:
+        paths:
+          {{- range $ing.paths }}
+          {{- $path := . }}
+          - path: {{ $path.path }}
+            pathType: {{ $path.type }}
+            backend:
+              service:
+                name: {{ printf "%s-svc" (include "mbcaas.fullname" (dict "appName" $appName)) }}
+                port:
+                  {{- if kindIs "string" $path.port }}
+                  name: {{ $path.port }}
+                  {{- else if kindIs "float64" $path.port }}
+                  number: {{ $path.port }}
+                  {{- end }}
+          {{- end }}
+{{ end }}
