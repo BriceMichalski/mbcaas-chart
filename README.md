@@ -1,5 +1,3 @@
-# MBCaaS Chart
-
 ## Sample
 
 ```yaml
