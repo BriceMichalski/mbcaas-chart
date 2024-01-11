@@ -27,7 +27,7 @@ spec:
     spec:
       {{- with $deploy.imagePullSecrets }}
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
+        - name: {{ . }}
       {{- end }}
       serviceAccountName: {{ include "mbcaas.serviceAccountName" (dict "appName" $deploy.name "serviceAccount" $deploy.serviceAccount )}}
       securityContext:
@@ -38,6 +38,22 @@ spec:
             {{- toYaml $deploy.securityContext | nindent 12 }}
           image: "{{ $deploy.image.repository }}:{{ $deploy.image.tag }}"
           imagePullPolicy: {{ $deploy.image.pullPolicy }}
+
+          {{- with $deploy.env }}
+          env:
+            {{- range $key, $value := .fromValue }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- range $key, $value := .fromSecret }}
+            - name: {{ $key }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $value.secret }}
+                  key: {{ $value.key }}
+            {{- end }}
+          {{- end }}
+
           {{- if $deploy.probe -}}
           {{- with (default $deploy.probe.liveness false) }}
           livenessProbe:

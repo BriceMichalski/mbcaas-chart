@@ -1,0 +1,24 @@
+{{- define "mbcaas.regcred.dockerconfig" -}}
+{{- printf "{\"auths\": {\"%s\": {\"auth\": \"%s\"}}}" .registry (printf "%s:%s" .username .password | b64enc) | b64enc }}
+{{- end }}
+
+{{- define "mbcaas.regcred.manifest" }}
+{{- $root := .root }}
+{{- $regcred := .regcred }}
+{{- $name := .name }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ $name }}
+  labels:
+    registry: {{ $regcred.registry }}
+type: kubernetes.io/dockerconfigjson
+data:
+  .dockerconfigjson: {{ include "mbcaas.regcred.dockerconfig" $regcred }}
+{{- end -}}
+
+{{- $root := . }}
+{{- range $name, $regcred := .Values.regcreds }}
+{{ include "mbcaas.regcred.manifest" (dict "root" $root "name" $name "regcred" $regcred) }}
+{{ end }}

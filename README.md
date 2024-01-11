@@ -1,4 +1,3 @@
-# MBCaaS Chart
 
 ## Sample
 
