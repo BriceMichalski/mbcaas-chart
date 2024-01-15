@@ -38,7 +38,6 @@ spec:
             {{- toYaml $deploy.securityContext | nindent 12 }}
           image: "{{ $deploy.image.repository }}:{{ $deploy.image.tag }}"
           imagePullPolicy: {{ $deploy.image.pullPolicy }}
-
           {{- with $deploy.env }}
           env:
             {{- range $key, $value := .fromValue }}
@@ -53,7 +52,14 @@ spec:
                   key: {{ $value.key }}
             {{- end }}
           {{- end }}
-
+          {{- with $deploy.volumes }}
+          volumeMounts:
+            {{- range $cm := .configMap }}
+            - name: {{ $cm.name }}
+              mountPath: {{ $cm.mount }}
+              readOnly: true
+            {{- end }}
+          {{- end }}
           {{- if $deploy.probe -}}
           {{- with (default $deploy.probe.liveness false) }}
           livenessProbe:
@@ -66,6 +72,14 @@ spec:
           {{- end }}
           resources:
             {{- toYaml ($deploy.resources | default $default.resources) | nindent 12 }}
+      {{- with $deploy.volumes }}
+      volumes:
+        {{- range $cm := .configMap }}
+        - name: {{ $cm.name }}
+          configMap:
+            name: {{ $cm.name }}
+        {{- end }}
+      {{- end }}
       {{- with $deploy.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

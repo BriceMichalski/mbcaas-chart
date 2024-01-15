@@ -1,0 +1,16 @@
+{{- define "mbcaas.configmap.manifest" }}
+{{- $root := .root }}
+{{- $cm := .cm }}
+{{- $name := .name }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $name }}
+data:
+    {{- $cm | toYaml | nindent 2}}
+{{- end }}
+
+{{- $root := . }}
+{{- range $name, $cm := .Values.cms }}
+{{ include "mbcaas.configmap.manifest" (dict "root" $root "name" $name "cm" $cm) }}
+{{ end }}
