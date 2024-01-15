@@ -2,6 +2,15 @@ apiVersion: v1
 entries:
   application:
   - apiVersion: v2
+    created: "2024-01-15T12:05:47.059285404Z"
+    description: Deploy custom application to mbcaas
+    digest: e977205db013d70672da72dc06064b14e9dea3fbc606813f4a29c16e2190b4cf
+    name: application
+    type: application
+    urls:
+    - https://github.com/BriceMichalski/mbcaas-chart/releases/download/application-0.3.0/application-0.3.0.tgz
+    version: 0.3.0
+  - apiVersion: v2
     created: "2024-01-11T18:20:50.388645648Z"
     description: Deploy custom application to mbcaas
     digest: 14a15cac086d6bf5bc8c2a9e7a887a0bc8a2e0cb6111aaa7bc36e746cab3a3f3
@@ -19,4 +28,4 @@ entries:
     urls:
     - https://github.com/BriceMichalski/mbcaas-chart/releases/download/application-0.1.0/application-0.1.0.tgz
     version: 0.1.0
-generated: "2024-01-11T18:20:50.388658552Z"
+generated: "2024-01-15T12:05:47.059302506Z"
