@@ -1,0 +1,62 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: {{ .Values.cluster.name }}
+spec:
+  kafka:
+    version: {{ .Values.cluster.version }}
+    replicas: {{ .Values.cluster.instance.replicas }}
+    resources:
+      {{- .Values.cluster.instance.resources | toYaml | nindent 6 }}
+    listeners:
+      - name: plain
+        port: 9092
+        type: internal
+        tls: false
+      {{- with .Values.cluster.extraListeners -}}
+      {{ . | toYaml | nindent 6}}
+      {{- end }}
+    config:
+      {{- .Values.cluster.config | toYaml | nindent 6 }}
+    storage:
+      type: jbod
+      volumes:
+        - id: 0
+          type: persistent-claim
+          size: {{ .Values.cluster.instance.storage.size | quote }}
+          class: {{ .Values.cluster.instance.storage.class }}
+          deleteClaim: true
+  zookeeper:
+    replicas: 1
+    resources:
+      requests:
+        memory: 200Mi
+        cpu: 200m
+      limits:
+        memory: 400Mi
+        cpu: 400m
+    config:
+      autopurge.snapRetainCount: 3
+      autopurge.purgeInterval: 2
+    storage:
+      type: persistent-claim
+      size: 5Gi
+      class: hdd-block
+      deleteClaim: true
+  entityOperator:
+    {{- with .Values.cluster.operatorResources.topicOperator  }}
+    topicOperator:
+      resources:
+        {{- . | toYaml | nindent 8 }}
+    {{- end }}
+    {{- with .Values.cluster.operatorResources.userOperator }}
+    userOperator:
+      resources:
+        {{- . | toYaml | nindent 8 }}
+    {{- end }}
+    {{- with .Values.cluster.operatorResources.tlsSidecar }}
+    tlsSidecar:
+      resources:
+        {{- . | toYaml | nindent 8 }}
+    {{- end }}
+
