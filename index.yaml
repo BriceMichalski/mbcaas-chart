@@ -28,4 +28,14 @@ entries:
     urls:
     - https://github.com/BriceMichalski/mbcaas-chart/releases/download/application-0.1.0/application-0.1.0.tgz
     version: 0.1.0
-generated: "2024-01-15T12:05:47.059302506Z"
+  kafka:
+  - apiVersion: v2
+    created: "2024-01-19T08:33:47.176065266Z"
+    description: Deploy Kafka broker to mbcaas
+    digest: bfec1c3008daca98193c3d2140670a772fa786369ac3175223a49cb07dc81244
+    name: kafka
+    type: application
+    urls:
+    - https://github.com/BriceMichalski/mbcaas-chart/releases/download/kafka-0.1.0/kafka-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-01-19T08:33:47.176076978Z"
