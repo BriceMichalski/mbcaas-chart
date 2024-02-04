@@ -72,6 +72,15 @@ spec:
           {{- end }}
           resources:
             {{- toYaml ($deploy.resources | default $default.resources) | nindent 12 }}
+          {{- with (default $deploy.service.ports false) }}
+          ports:
+            {{- range $svc := . }}
+            - containerPort: {{ $svc.port }}
+            {{- end }}
+          {{- end }}
+
+
+
       {{- with $deploy.volumes }}
       volumes:
         {{- range $cm := .configMap }}
