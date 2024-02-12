@@ -38,6 +38,9 @@ spec:
             {{- toYaml $deploy.securityContext | nindent 12 }}
           image: "{{ $deploy.image.repository }}:{{ $deploy.image.tag }}"
           imagePullPolicy: {{ $deploy.image.pullPolicy }}
+          {{- with $deploy.cmd }}
+          command: {{ . }}
+          {{- end }}
           {{- with $deploy.env }}
           env:
             {{- range $key, $value := .fromValue }}
@@ -58,6 +61,10 @@ spec:
             - name: {{ $cm.name }}
               mountPath: {{ $cm.mount }}
               readOnly: true
+            {{- end }}
+            {{- range $pvc := .persistentVolumeClaim }}
+            - name: {{ $pvc.name }}
+              mountPath: {{ $pvc.mount }}
             {{- end }}
           {{- end }}
           {{- if $deploy.probe -}}
@@ -88,7 +95,14 @@ spec:
           configMap:
             name: {{ $cm.name }}
         {{- end }}
+
+        {{- range $pvc := .persistentVolumeClaim }}
+        - name: {{ $pvc.name }}
+          persistentVolumeClaim:
+            claimName: {{ $pvc.name }}
+        {{- end }}
       {{- end }}
+
       {{- with $deploy.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

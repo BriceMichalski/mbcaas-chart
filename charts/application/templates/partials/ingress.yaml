@@ -10,14 +10,12 @@ metadata:
   name: {{ printf "%s-ing" (include "mbcaas.fullname" (dict "appName" $appName)) }}
   labels:
     {{- include "mbcaas.labels" (dict "root" $root "appName" $appName) | nindent 4 }}
+  {{- with $ing.annotations }}
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    external-dns.alpha.kubernetes.io/target: "ipv4.mbcaas.com"
-    {{- if default $ing.admin false }}
-    traefik.ingress.kubernetes.io/router.middlewares: kube-network-admin-basic-auth@kubernetescrd
-    {{- end }}
+    {{ . | toYaml | nindent 4}}
+  {{- end }}
+
 spec:
-  ingressClassName: traefik
   rules:
     - host: {{ $ing.host | quote }}
       http:
