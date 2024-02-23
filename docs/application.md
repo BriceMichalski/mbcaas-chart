@@ -83,6 +83,7 @@ Allow you to define and configure workload
 deploys:
   - name: dummy-app
     imagePullSecrets: ghcr-personnal-token
+    startegy: Recreate # Can be 'Recreate' or 'RollingUpdate'. default: 'Recreate'. nb: RollingUpdate may not be possible if namespace quota do not permit to create a new pod
     image:
       repository: ghcr.io/johndoe/johndoe/dummy-app
       pullPolicy: IfNotPresent

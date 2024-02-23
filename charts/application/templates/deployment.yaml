@@ -13,7 +13,8 @@ spec:
   {{- if not $deploy.autoscaling }}
   replicas: {{ $deploy.replicaCount | default $default.replicaCount }}
   {{- end }}
-  strategy: {{ $deploy.strategy | default $default.strategy }}
+  strategy:
+    type: {{ $deploy.strategy | default $default.strategy }}
   selector:
     matchLabels:
       {{- include "mbcaas.selectorLabels" (dict "root" $root "appName" $deploy.name) | nindent 6 }}
