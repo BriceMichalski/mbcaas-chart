@@ -10,12 +10,24 @@ metadata:
   name: {{ printf "%s-ing" (include "mbcaas.fullname" (dict "appName" $appName)) }}
   labels:
     {{- include "mbcaas.labels" (dict "root" $root "appName" $appName) | nindent 4 }}
-  {{- with $ing.annotations }}
   annotations:
+  {{- with $ing.tls }}
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    cert-manager.io/cluster-issuer: .
+  {{- else }}
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+  {{- end }}
+  {{- with $ing.annotations }}
     {{ . | toYaml | nindent 4}}
   {{- end }}
-
 spec:
+  {{- with $ing.tls }}
+  tls:
+    - hosts:
+      - ipv4.mbcaas.com
+      - {{ $ing.host }}
+      secretName: {{ $ing.host }}-cert
+  {{- end }}
   rules:
     - host: {{ $ing.host | quote }}
       http:

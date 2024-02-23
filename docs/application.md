@@ -144,6 +144,7 @@ deploys:
 
     # Service www exposition
     ingress:
+      tls: selfsigned
       host: poc.dummy.com
       paths:
         - path: /
