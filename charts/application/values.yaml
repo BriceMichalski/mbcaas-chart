@@ -1,6 +1,7 @@
 default:
   probe: {}
   replicaCount: 1
+  strategy: Recreate
   resources:
     limits:
       cpu: 100m
