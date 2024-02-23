@@ -13,7 +13,7 @@ metadata:
   annotations:
   {{- with $ing.tls }}
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    cert-manager.io/cluster-issuer: .
+    cert-manager.io/cluster-issuer: {{ . }}
   {{- else }}
     traefik.ingress.kubernetes.io/router.entrypoints: web
   {{- end }}
