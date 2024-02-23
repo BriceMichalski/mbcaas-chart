@@ -2,6 +2,15 @@ apiVersion: v1
 entries:
   application:
   - apiVersion: v2
+    created: "2024-02-23T21:11:00.079730073Z"
+    description: Deploy custom application to mbcaas
+    digest: 99c296a7d24b8c715af0326e328dea1b680cecf79e975d70c744c03ac4d8c74f
+    name: application
+    type: application
+    urls:
+    - https://github.com/BriceMichalski/mbcaas-chart/releases/download/application-0.8.0/application-0.8.0.tgz
+    version: 0.8.0
+  - apiVersion: v2
     created: "2024-02-23T20:57:36.811963043Z"
     description: Deploy custom application to mbcaas
     digest: 6d6b333410a3a2f767819813a8d7c1f4eb9feb6385b38e8fbc0ac0e8dc163aad
@@ -74,4 +83,4 @@ entries:
     urls:
     - https://github.com/BriceMichalski/mbcaas-chart/releases/download/kafka-0.1.0/kafka-0.1.0.tgz
     version: 0.1.0
-generated: "2024-02-23T20:57:36.812007916Z"
+generated: "2024-02-23T21:11:00.079771621Z"
