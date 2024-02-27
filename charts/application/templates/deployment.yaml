@@ -35,74 +35,25 @@ spec:
       securityContext:
         {{- toYaml $deploy.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ $deploy.name }}
-          securityContext:
-            {{- toYaml $deploy.securityContext | nindent 12 }}
-          image: "{{ $deploy.image.repository }}:{{ $deploy.image.tag }}"
-          imagePullPolicy: {{ $deploy.image.pullPolicy }}
-          {{- with $deploy.cmd }}
-          command: {{ . }}
-          {{- end }}
-          {{- with $deploy.env }}
-          env:
-            {{- range $key, $value := .fromValue }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
-            {{- end }}
-            {{- range $key, $value := .fromSecret }}
-            - name: {{ $key }}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ $value.secret }}
-                  key: {{ $value.key }}
-            {{- end }}
-          {{- end }}
-          {{- with $deploy.volumes }}
-          volumeMounts:
-            {{- range $cm := .configMap }}
-            - name: {{ $cm.name }}
-              mountPath: {{ $cm.mount }}
-              readOnly: true
-            {{- end }}
-            {{- range $pvc := .persistentVolumeClaim }}
-            - name: {{ $pvc.name }}
-              mountPath: {{ $pvc.mount }}
-            {{- end }}
-          {{- end }}
-          {{- if $deploy.probe -}}
-          {{- with (default $deploy.probe.liveness false) }}
-          livenessProbe:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with (default $deploy.probe.readiness false) }}
-          readinessProbe:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- end }}
-          resources:
-            {{- toYaml ($deploy.resources | default $default.resources) | nindent 12 }}
-          {{- with (default $deploy.service.ports false) }}
-          ports:
-            {{- range $svc := . }}
-            - containerPort: {{ $svc.port }}
-            {{- end }}
-          {{- end }}
+        {{- $mainPod := dict -}}
+        {{- $portsList := list }}
+        {{- range $deploy.service.ports }}
+          {{- $portsList = append $portsList .port }}
+        {{- end }}
+        {{- $mainPod := set $mainPod "name" $deploy.name}}
+        {{- $mainPod := set $mainPod "securityContext" $deploy.securityContext}}
+        {{- $mainPod := set $mainPod "image" $deploy.image}}
+        {{- $mainPod := set $mainPod "cmd" $deploy.cmd }}
+        {{- $mainPod := set $mainPod "env" $deploy.env }}
+        {{- $mainPod := set $mainPod "resources" $deploy.resources }}
+        {{- $mainPod := set $mainPod "probe" $deploy.probe }}
+        {{- $mainPod := set $mainPod "mount" $deploy.volumes }}
+        {{- $mainPod := set $mainPod "ports" $portsList }}
 
-
+        {{- include "mbcaas.pod"   (dict "default" $default "pod" $mainPod) | nindent 8 }}
 
       {{- with $deploy.volumes }}
-      volumes:
-        {{- range $cm := .configMap }}
-        - name: {{ $cm.name }}
-          configMap:
-            name: {{ $cm.name }}
-        {{- end }}
-
-        {{- range $pvc := .persistentVolumeClaim }}
-        - name: {{ $pvc.name }}
-          persistentVolumeClaim:
-            claimName: {{ $pvc.name }}
-        {{- end }}
+      {{- include "mbcaas.volumes"   (dict "volumes" .) | nindent 6 }}
       {{- end }}
 
       {{- with $deploy.nodeSelector }}

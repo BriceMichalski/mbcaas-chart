@@ -12,7 +12,7 @@ default:
   service:
     type: ClusterIP
     port: 80
-
+  cronjob:
 # deploys:
 # - name: dummy-app
 #   image:

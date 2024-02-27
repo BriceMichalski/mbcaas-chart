@@ -1,0 +1,59 @@
+{{- define "mbcaas.pod" }}
+{{- $default := .default -}}
+{{- $pod := .pod -}}
+- name: {{ $pod.name }}
+  securityContext:
+    {{- toYaml $pod.securityContext | nindent 4 }}
+  image: "{{ $pod.image.repository }}:{{ $pod.image.tag }}"
+  imagePullPolicy: {{ $pod.image.pullPolicy }}
+  {{- with $pod.cmd }}
+  command:
+    - {{ .shell | default "/bin/sh" }}
+    - -c
+    - {{- toYaml .exec | indent 6 }}
+  {{- end }}
+  {{- with $pod.env }}
+  env:
+    {{- range $key, $value := .fromValue }}
+    - name: {{ $key }}
+      value: {{ $value | quote }}
+    {{- end }}
+    {{- range $key, $value := .fromSecret }}
+    - name: {{ $key }}
+      valueFrom:
+        secretKeyRef:
+          name: {{ $value.secret }}
+          key: {{ $value.key }}
+    {{- end }}
+  {{- end }}
+  {{- with $pod.mount }}
+  volumeMounts:
+    {{- range $cm := .configMap }}
+    - name: {{ $cm.name }}
+      mountPath: {{ $cm.mount }}
+      readOnly: true
+    {{- end }}
+    {{- range $pvc := .persistentVolumeClaim }}
+    - name: {{ $pvc.name }}
+      mountPath: {{ $pvc.mount }}
+    {{- end }}
+  {{- end }}
+  {{- if $pod.probe -}}
+  {{- with (default $pod.probe.liveness false) }}
+  livenessProbe:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with (default $pod.probe.readiness false) }}
+  readinessProbe:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
+  resources:
+    {{- toYaml ($pod.resources | default $default.resources) | nindent 4 }}
+  {{- with (default $pod.ports false) }}
+  ports:
+    {{- range . }}
+    - containerPort: {{ . }}
+    {{- end }}
+  {{- end }}
+{{- end }}

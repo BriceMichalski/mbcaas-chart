@@ -1,0 +1,14 @@
+{{- define "mbcaas.volumes" }}
+{{- $volumes := .volumes }}
+volumes:
+  {{- range $cm := $volumes.configMap }}
+  - name: {{ $cm.name }}
+    configMap:
+      name: {{ $cm.name }}
+  {{- end }}
+  {{- range $pvc := $volumes.persistentVolumeClaim }}
+  - name: {{ $pvc.name }}
+    persistentVolumeClaim:
+      claimName: {{ $pvc.name }}
+  {{- end }}
+{{- end }}

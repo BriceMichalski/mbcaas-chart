@@ -1,0 +1,30 @@
+{{ $root := . }}
+{{ $default := .Values.default }}
+
+{{- range .Values.cronjobs }}
+{{- $cj := . -}}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ $cj.name }}
+spec:
+  schedule: {{ $cj.cron | quote }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          {{- $mainPod := dict }}
+          {{- $mainPod := set $mainPod "name" $cj.name}}
+          {{- $mainPod := set $mainPod "securityContext" $cj.securityContext}}
+          {{- $mainPod := set $mainPod "image" $cj.image}}
+          {{- $mainPod := set $mainPod "cmd" $cj.cmd }}
+          {{- $mainPod := set $mainPod "env" $cj.env }}
+          {{- $mainPod := set $mainPod "resources" $cj.resources }}
+          {{- $mainPod := set $mainPod "mount" $cj.volumes }}
+          {{- include "mbcaas.pod"   (dict "default" $default "pod" $mainPod) | nindent 10 }}
+          restartPolicy: Never
+          {{- with $cj.volumes }}
+          {{- include "mbcaas.volumes"   (dict "volumes" .) | nindent 10 }}
+          {{- end }}
+{{- end }}

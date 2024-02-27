@@ -154,3 +154,30 @@ deploys:
 ```
 
 
+## Cronjob
+
+```yaml
+cronjobs:
+  - name: influx-backup
+    cron: "* * * * *" # Cron got job trigger
+    image:
+      repository: alpine
+      pullPolicy: IfNotPresent
+      tag: 3.19
+
+    # Override container image command
+    cmd: 
+      shell: "/bin/ash" # Shell to use (default: /bin/sh)
+      exec: | # command block to exec
+        apk add coreutils
+        wget https://dl.influxdata.com/influxdb/releases/influxdb2-client-2.7.3-linux-amd64.tar.gz
+        tar xvzf ./influxdb2-client-2.7.3-linux-amd64.tar.gz
+        mkdir -p /data/`date -d yesterday +%Y`/`date -d yesterday +%m-%B`
+        ./influx backup ...  >> /data/`date -d yesterday +%Y`/`date -d yesterday +%m-%B`/`date -d yesterday +%d-%A`.csv
+
+    # Volumes (same as deployment part)
+    volumes:
+      persistentVolumeClaim:
+        - name: influx-backup-data
+          mount: /data
+```
