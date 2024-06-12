@@ -9,6 +9,14 @@ cluster:
   members: 1                # NUmber of Mongo Node
 ```
 
+## Storage size
+
+```yaml
+storage:
+  data: 10G
+  logs: 2G
+```
+
 ## Mongod resources
 ```yaml
 resources:
