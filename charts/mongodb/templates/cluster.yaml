@@ -1,0 +1,90 @@
+{{- $root := .Values -}}
+{{- $release := .Release -}}
+---
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: {{ $root.cluster.name }}
+spec:
+  members: {{ $root.cluster.members }}
+  type: ReplicaSet
+  version: {{ $root.cluster.version }}
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  users:
+    - name: {{ .Values.adminUser }}
+      db: admin
+      passwordSecretRef: # a reference to the secret that will be used to generate the user's password
+        name: {{ .Values.adminUser }}-password
+        key: password
+      roles:
+        - name: root
+          db: admin
+      connectionStringSecretName: {{ .Values.adminUser }}-creds
+      scramCredentialsSecretName: {{ .Values.adminUser }}-scram
+    {{- range $user := $root.users }}
+    - name: {{ $user.name }}
+      db: admin
+      passwordSecretRef: # a reference to the secret that will be used to generate the user's password
+        name: {{ $user.name }}-password
+      roles:
+        {{- toYaml $user.roles | nindent 8 }}
+      scramCredentialsSecretName: {{ $user.name }}-scram
+    {{- end }}
+
+  statefulSet:
+    spec:
+      volumeClaimTemplates:
+        - metadata:
+            name: data-volume
+          spec:
+            accessModes: ["ReadWriteOnce"]
+            storageClassName: ssd-block
+            resources:
+              requests:
+                storage: 10G
+        - metadata:
+            name: logs-volume
+          spec:
+            accessModes: [ "ReadWriteOnce" ]
+            storageClassName: ssd-file
+            resources:
+              requests:
+                storage: 2G
+      template:
+        spec:
+          nodeSelector:
+            kubernetes.io/arch: amd64
+          containers:
+            - name: mongod
+              resources:
+                {{- toYaml .Values.resources | nindent 16 }}
+            - name: mongodb-agent
+              readinessProbe:
+                failureThreshold: 10
+                initialDelaySeconds: 10
+              resources:
+                limits:
+                  cpu: "0.2"
+                  memory: 250M
+                requests:
+                  cpu: "0.2"
+                  memory: 200M
+          initContainers:
+            - name: mongodb-agent-readinessprobe
+              resources:
+                limits:
+                  cpu: "0.2"
+                  memory: 250M
+                requests:
+                  cpu: "0.2"
+                  memory: 200M
+            - name: mongod-posthook
+              resources:
+                limits:
+                  cpu: "0.2"
+                  memory: 250M
+                requests:
+                  cpu: "0.2"
+                  memory: 200M

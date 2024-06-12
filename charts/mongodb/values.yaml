@@ -1,0 +1,30 @@
+cluster:
+  name: mongodb-cluster
+  version: 6.0.5
+  members: 1
+
+adminUser: admin
+adminPassword: azertyuiop
+
+users:
+  []
+  # - name: admin
+  #   password: azertyuiop
+  #   roles:
+  #     - db: admin
+  #       name: clusterAdmin
+
+gui:
+  enabled: false
+  host: mongo.exemple.com
+  basicAuth:
+    user: foo
+    password: bar
+
+resources:
+  limits:
+    cpu: "0.2"
+    memory: 250M
+  requests:
+    cpu: "0.2"
+    memory: 200M

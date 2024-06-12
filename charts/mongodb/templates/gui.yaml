@@ -1,0 +1,86 @@
+
+{{- if .Values.gui.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-express-deployment
+  labels:
+    app: mongo-express
+    app.kubernetes.io/name: mongo-express
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-express
+      app.kubernetes.io/name: mongo-express
+  template:
+    metadata:
+      labels:
+        app: mongo-express
+        app.kubernetes.io/name: mongo-express
+    spec:
+      containers:
+      - name: mongo-express
+        image: mongo-express:1.0.2
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "100m"
+          limits:
+            memory: "200Mi"
+            cpu: "200m"
+        ports:
+        - containerPort: 8081
+        env:
+        - name: ME_CONFIG_MONGODB_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.adminUser }}-creds
+              key: connectionString.standardSrv
+        - name: ME_CONFIG_MONGODB_ENABLE_ADMIN
+          value: "true"
+        - name: ME_CONFIG_BASICAUTH_USERNAME
+          value: {{ .Values.gui.basicAuth.user }}
+        - name: ME_CONFIG_BASICAUTH_PASSWORD
+          value: {{ .Values.gui.basicAuth.password }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-express
+spec:
+  selector:
+    app.kubernetes.io/name: mongo-express
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8081
+    targetPort: 8081
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mongo-express
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    cert-manager.io/cluster-issuer: selfsigned
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+      - ipv4.mbcaas.com
+      - {{ .Values.gui.host }}
+      secretName: {{ .Values.gui.host }}-cert
+  rules:
+  - host: {{ .Values.gui.host }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: "mongo-express"
+            port:
+              name: http
+        path: /
+        pathType: Prefix
+{{- end }}

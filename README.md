@@ -14,3 +14,10 @@
 >
 
 [Documentation](#)
+
+## mongodb
+
+> Chart to deploy mongo cluster using streamzi
+>
+
+[Documentation](#)
