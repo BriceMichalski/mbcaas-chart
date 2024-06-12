@@ -12,9 +12,8 @@
     - -c
     - {{- toYaml .exec | indent 6 }}
   {{- end }}
-  {{- with $pod.subCmd }}
-  command:
-    - {{- toYaml . | indent 6 }}
+  {{- with $pod.args }}
+  args: {{ . }}
   {{- end }}
   {{- with $pod.env }}
   env:
