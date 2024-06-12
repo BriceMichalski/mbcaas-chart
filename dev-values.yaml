@@ -1,0 +1,14 @@
+cluster:
+  name: mongodb-cluster
+  version: 7.0.11
+  members: 1
+
+adminUser: root
+adminPassword: azertyuiop
+
+gui:
+  enabled: false
+  host: mongo.i2mo.org
+  basicAuth:
+    user: foo
+    password: bar
