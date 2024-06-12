@@ -36,10 +36,7 @@ spec:
         {{- toYaml $deploy.podSecurityContext | nindent 8 }}
       containers:
         {{- $mainPod := dict -}}
-        {{- $portsList := list }}
-        {{- range $deploy.service.ports }}
-          {{- $portsList = append $portsList .port }}
-        {{- end }}
+
         {{- $mainPod := set $mainPod "name" $deploy.name}}
         {{- $mainPod := set $mainPod "securityContext" $deploy.securityContext}}
         {{- $mainPod := set $mainPod "image" $deploy.image}}
@@ -48,7 +45,16 @@ spec:
         {{- $mainPod := set $mainPod "resources" $deploy.resources }}
         {{- $mainPod := set $mainPod "probe" $deploy.probe }}
         {{- $mainPod := set $mainPod "mount" $deploy.volumes }}
+
+
+        {{- if $deploy.service }}
+        {{- $portsList := list }}
+        {{- range $deploy.service.ports }}
+          {{- $portsList = append $portsList .port }}
+        {{- end }}
         {{- $mainPod := set $mainPod "ports" $portsList }}
+        {{- end }}
+
 
         {{- include "mbcaas.pod"   (dict "default" $default "pod" $mainPod) | nindent 8 }}
 
