@@ -96,8 +96,8 @@ deploys:
       shell: "/bin/bash"
       exec: "tail -f"
 
-    # Container sub command to pass to entrypoint
-    subCmd: run
+    # Container args to pass to entrypoint
+    args: run
 
     # Resource allocated to dummy-app
     resources:   # Optional
