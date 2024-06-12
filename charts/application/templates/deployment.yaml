@@ -41,6 +41,7 @@ spec:
         {{- $mainPod := set $mainPod "securityContext" $deploy.securityContext}}
         {{- $mainPod := set $mainPod "image" $deploy.image}}
         {{- $mainPod := set $mainPod "cmd" $deploy.cmd }}
+        {{- $mainPod := set $mainPod "args" $deploy.args }}
         {{- $mainPod := set $mainPod "env" $deploy.env }}
         {{- $mainPod := set $mainPod "resources" $deploy.resources }}
         {{- $mainPod := set $mainPod "probe" $deploy.probe }}
