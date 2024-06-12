@@ -6,6 +6,10 @@ cluster:
 adminUser: admin
 adminPassword: azertyuiop
 
+storage:
+  data: 10G
+  logs: 2G
+
 users:
   []
   # - name: admin
