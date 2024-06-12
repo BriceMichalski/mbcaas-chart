@@ -92,8 +92,12 @@ deploys:
     replicaCount: 1 # Optional | default: 1
 
     # Container command
-    cmd: 
-      - java -jar /srv/dummy-app.jar
+    cmd:
+      shell: "/bin/bash"
+      exec: "tail -f"
+
+    # Container sub command to pass to entrypoint
+    subCmd: run
 
     # Resource allocated to dummy-app
     resources:   # Optional
