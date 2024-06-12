@@ -12,6 +12,10 @@
     - -c
     - {{- toYaml .exec | indent 6 }}
   {{- end }}
+  {{- with $pod.subCmd }}
+  command:
+    - {{- toYaml . | indent 6 }}
+  {{- end }}
   {{- with $pod.env }}
   env:
     {{- range $key, $value := .fromValue }}
