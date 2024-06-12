@@ -23,3 +23,15 @@ jobs:
         uses: helm/chart-releaser-action@v1.5.0
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Commit and Push changes to gh-pages
+        if: success()
+        run: |
+          git checkout gh-pages
+          git pull origin gh-pages
+          git checkout master -- README.md docs/
+          git add README.md docs/
+          git commit -m "Update README and docs from master"
+          git push origin gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
