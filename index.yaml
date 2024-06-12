@@ -101,4 +101,14 @@ entries:
     urls:
     - https://github.com/BriceMichalski/mbcaas-chart/releases/download/kafka-0.1.0/kafka-0.1.0.tgz
     version: 0.1.0
-generated: "2024-02-27T09:03:59.782310777Z"
+  mongo:
+  - apiVersion: v2
+    created: "2024-06-12T09:49:12.40064014Z"
+    description: Deploy mongo database to mbcaas
+    digest: a80cd9aba0b01c654a2944ef8417cd31310fc9a9ad1818577f3a6a01ed60569a
+    name: mongo
+    type: application
+    urls:
+    - https://github.com/BriceMichalski/mbcaas-chart/releases/download/mongo-0.1.0/mongo-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-06-12T09:49:12.400667671Z"
