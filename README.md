@@ -1,23 +1,30 @@
-# Chart list
+# MBCaaS Helm Charts Repository
 
-## application 
+## Installation 
 
-> Chart to deploy custom application on mbcaas
->
+```bash
+$ helm repo add mbcaas https://charts.mbcaas.com/
+$ helm repo update
+```
 
-[Documentation](./docs/application.md)
+## Usage
 
+Search charts name & versions
+```bash
+$ helm search repo mbcaas
+```
 
-## kafka 
+Install one chart
+```bash
+$ helm install my-release mbcaas/<chart>
+```
 
-> Chart to deploy kafka cluster using streamzi
->
+## Chart List
 
-[Documentation](#)
+| Chart Name | Usage | Documentation |
+|------------|-------|---------------|
+|  Applications   |   Deploy custom application to mbcaas       | [application.md](./docs/application.md)       |
+|  Kafka          |   Deploy Kafka broker to mbcaas             | [kafka.md](./docs/kafka.md)       |
+|  Mongodb        |   Deploy Mongodb to mbcaas                  | [mongodb.md](./docs/mongodb.md)       |
 
-## mongodb
-
-> Chart to deploy mongo cluster using streamzi
->
-
-[Documentation](#)
+> For more information you can browse https://github.com/BriceMichalski/mbcaas-chart
