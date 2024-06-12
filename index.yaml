@@ -111,4 +111,14 @@ entries:
     urls:
     - https://github.com/BriceMichalski/mbcaas-chart/releases/download/mongo-0.1.0/mongo-0.1.0.tgz
     version: 0.1.0
-generated: "2024-06-12T09:49:12.400667671Z"
+  mongodb:
+  - apiVersion: v2
+    created: "2024-06-12T10:19:08.763599719Z"
+    description: Deploy mongo database to mbcaas
+    digest: dd6f5534acc0a34387871d3161072993c7ab90f9669ae58099da254ee0093de4
+    name: mongodb
+    type: application
+    urls:
+    - https://github.com/BriceMichalski/mbcaas-chart/releases/download/mongodb-0.2.0/mongodb-0.2.0.tgz
+    version: 0.2.0
+generated: "2024-06-12T10:19:08.763633683Z"
