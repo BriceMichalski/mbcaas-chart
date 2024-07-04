@@ -44,13 +44,9 @@ spec:
       class: hdd-block
       deleteClaim: true
   entityOperator:
+    userOperator: null
     {{- with .Values.cluster.operatorResources.topicOperator  }}
     topicOperator:
-      resources:
-        {{- . | toYaml | nindent 8 }}
-    {{- end }}
-    {{- with .Values.cluster.operatorResources.userOperator }}
-    userOperator:
       resources:
         {{- . | toYaml | nindent 8 }}
     {{- end }}
