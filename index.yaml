@@ -176,6 +176,15 @@ entries:
     version: 0.1.0
   mongodb:
   - apiVersion: v2
+    created: "2024-12-04T10:34:40.878451456Z"
+    description: Deploy mongo database to mbcaas
+    digest: 30895e74f77bb9cbcba925e47293bbe6490927a4c0fe6a0e67bfc1063e8fe190
+    name: mongodb
+    type: application
+    urls:
+    - https://github.com/BriceMichalski/mbcaas-chart/releases/download/mongodb-0.2.2/mongodb-0.2.2.tgz
+    version: 0.2.2
+  - apiVersion: v2
     created: "2024-12-04T09:32:22.30973224Z"
     description: Deploy mongo database to mbcaas
     digest: e3c5ea3c85bd9a05d5eea68ee2e12a23e3ab3ced805ba4f9318943d8ec5d5cd2
@@ -193,4 +202,4 @@ entries:
     urls:
     - https://github.com/BriceMichalski/mbcaas-chart/releases/download/mongodb-0.2.0/mongodb-0.2.0.tgz
     version: 0.2.0
-generated: "2024-12-04T09:32:22.309786191Z"
+generated: "2024-12-04T10:34:40.879257836Z"
