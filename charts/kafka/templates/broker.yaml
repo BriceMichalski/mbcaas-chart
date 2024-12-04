@@ -40,8 +40,8 @@ spec:
       autopurge.purgeInterval: 2
     storage:
       type: persistent-claim
-      size: 5Gi
-      class: hdd-block
+      size: {{ .Values.cluster.zookeeper.storage.size | quote }}
+      class: {{ .Values.cluster.zookeeper.storage.class }}
       deleteClaim: true
   entityOperator:
     userOperator: null
