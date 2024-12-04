@@ -40,7 +40,7 @@ spec:
             name: data-volume
           spec:
             accessModes: ["ReadWriteOnce"]
-            storageClassName: ssd-block
+            storageClassName: {{ .Values.storage.class }}
             resources:
               requests:
                 storage: {{ .Values.storage.data }}
@@ -51,7 +51,7 @@ spec:
             storageClassName: ssd-file
             resources:
               requests:
-                storage: {{ .Values.storage.logs }}
+                storage: {{ .Values.storage.class }}
       template:
         spec:
           nodeSelector:
