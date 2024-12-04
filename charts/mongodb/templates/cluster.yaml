@@ -48,10 +48,10 @@ spec:
             name: logs-volume
           spec:
             accessModes: [ "ReadWriteOnce" ]
-            storageClassName: ssd-file
+            storageClassName: {{ .Values.storage.class }}
             resources:
               requests:
-                storage: {{ .Values.storage.class }}
+                storage: {{ .Values.storage.logs }}
       template:
         spec:
           nodeSelector:
