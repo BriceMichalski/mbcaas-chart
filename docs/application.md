@@ -11,7 +11,33 @@ mbcaas-chart usage sample
 - [Volumes](#pvc)
 - [Deployment](#deployment)
 
+## Change:
 
+### 0.14.0
+  - Secret now accept annotations
+  - **!! Breaking !!** Deployment ingress now defined as array. 
+    use
+    ```yaml
+    deploys:
+      [...]
+      ingress:
+      - host: poc.dummy.com
+        paths:
+          - path: /
+            type: Prefix
+            port: http
+    ```
+    instead of 
+    ```yaml
+    deploys:
+      [...]
+      ingress:
+        host: poc.dummy.com
+        paths:
+          - path: /
+            type: Prefix
+            port: http
+    ```
 
 ## Regcreds
 
@@ -32,6 +58,8 @@ Allow you to define secret value, can be use in env vars
 ```yaml
 secrets:
   api-creds:
+    annotations:
+      replicator.v1.mittwald.de/replication-allowed: "true"
     stringData:
       auth_user: AdminJohnDoe
       auth_password: 6EQUJ5wow!
@@ -50,7 +78,7 @@ cms:
         version: ${APP_VERSION}
 
       server:
-        port : ${APP_PORT}
+        port: ${APP_PORT}
 
       management:
         endpoints:
@@ -149,12 +177,11 @@ deploys:
 
     # Service www exposition
     ingress:
-      tls: selfsigned
-      host: poc.dummy.com
-      paths:
-        - path: /
-          type: Prefix
-          port: http
+      - host: poc.dummy.com
+        paths:
+          - path: /
+            type: Prefix
+            port: http
 ```
 
 
