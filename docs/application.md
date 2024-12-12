@@ -15,11 +15,12 @@ mbcaas-chart usage sample
 
 ### 0.14.0
   - Secret now accept annotations
-  - **!! Breaking !!** Deployment ingress now defined as array. 
-    use
+  - **!! Breaking !!** Deployment ingress now defined as array.  
+    use  
+
     ```yaml
     deploys:
-      [...]
+      # ...
       ingress:
       - host: poc.dummy.com
         paths:
@@ -27,10 +28,12 @@ mbcaas-chart usage sample
             type: Prefix
             port: http
     ```
-    instead of 
+
+    instead of  
+    
     ```yaml
     deploys:
-      [...]
+      # ...
       ingress:
         host: poc.dummy.com
         paths:
