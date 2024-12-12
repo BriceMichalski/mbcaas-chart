@@ -14,6 +14,7 @@ spec:
       {{- $mainPod := dict }}
       {{- $mainPod := set $mainPod "name" $job.name}}
       {{- $mainPod := set $mainPod "securityContext" $job.securityContext}}
+      {{- $mainPod := set $mainPod "imagePullSecrets" $job.imagePullSecrets}}
       {{- $mainPod := set $mainPod "image" $job.image}}
       {{- $mainPod := set $mainPod "cmd" $job.cmd }}
       {{- $mainPod := set $mainPod "env" $job.env }}
