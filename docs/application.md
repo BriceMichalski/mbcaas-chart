@@ -10,6 +10,7 @@ mbcaas-chart usage sample
 - [ConfigMap](#configmap)
 - [Volumes](#pvc)
 - [Deployment](#deployment)
+- [CronJob](#cronjob)
 
 ## Change:
 
@@ -214,4 +215,31 @@ cronjobs:
       persistentVolumeClaim:
         - name: influx-backup-data
           mount: /data
+```
+
+## Job
+
+```yaml
+jobs:
+  - name: init-db
+    image:
+      repository: alpine
+      pullPolicy: IfNotPresent
+      tag: 3.19
+
+    backoffLimit: 2        # 2 retries
+
+    # Override container image command
+    cmd: 
+      shell: "/bin/ash" # Shell to use (default: /bin/sh)
+      exec: | # command block to exec
+        mongo my-db-address:27017 /data/init-database.js
+
+
+    # Volumes (same as deployment part)
+    volumes:
+      persistentVolumeClaim:
+        - name: mongo-scripts-js
+          mount: /data
+   
 ```
