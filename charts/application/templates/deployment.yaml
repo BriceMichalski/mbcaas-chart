@@ -83,7 +83,11 @@ spec:
 {{- end }}
 ---
 {{- if $deploy.ingress }}
-{{ include "mbcaas.ingress" (dict "root" $root "default" $default "appName" $deploy.name "ingress" $deploy.ingress)}}
+{{- range $deploy.ingress }}
+{{- $ingress := . }}
+{{ include "mbcaas.ingress" (dict "root" $root "default" $default "appName" $deploy.name "ingress" $ingress)}}
+---
+{{- end }}
 {{- end }}
 ---
 {{- end }}

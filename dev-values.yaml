@@ -1,14 +1,46 @@
-cluster:
-  name: mongodb-cluster
-  version: 7.0.11
-  members: 1
+deploys:
+  - name: dummy-app
+    image:
+      repository: nginx
+      pullPolicy: IfNotPresent
+      tag: "latest"
 
-adminUser: root
-adminPassword: azertyuiop
+    replicaCount: 1 # Optional | default: 1
 
-gui:
-  enabled: false
-  host: mongo.i2mo.org
-  basicAuth:
-    user: foo
-    password: bar
+    resources: # Optional
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+
+    serviceAccount: # Optional
+      create: true
+      name: dummy-sa
+
+    service:
+      ports:
+        - port: 80
+          protocol: TCP
+          name: http
+
+    ingress:
+      - host: poc.dummy.com
+        paths:
+          - path: /
+            type: Prefix
+            port: http
+      - host: poc.mbcaas.com
+        paths:
+          - path: /
+            type: Prefix
+            port: http
+
+secrets:
+  api-creds:
+    annotations:
+      replicator.v1.mittwald.de/replication-allowed: "true"
+    stringData:
+      auth_user: AdminJohnDoe
+      auth_password: 6EQUJ5wow!

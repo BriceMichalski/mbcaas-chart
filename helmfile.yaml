@@ -5,9 +5,9 @@ helmDefaults:
 
 releases:
 
-- name: poc-mongo
-  namespace: i2mo
-  chart: ./charts/mongodb
+- name: poc
+  namespace: default
+  chart: ./charts/application
   values:
   - ./dev-values.yaml
 

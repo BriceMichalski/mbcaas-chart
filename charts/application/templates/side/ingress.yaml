@@ -7,7 +7,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ printf "%s-ing" (include "mbcaas.fullname" (dict "appName" $appName)) }}
+  name: {{ printf "%s-%s-ing" (include "mbcaas.fullname" (dict "appName" $appName)) ($ing.host | replace "." "-") }}
   labels:
     {{- include "mbcaas.labels" (dict "root" $root "appName" $appName) | nindent 4 }}
   annotations:
@@ -24,7 +24,6 @@ spec:
   {{- with $ing.tls }}
   tls:
     - hosts:
-      - ipv4.mbcaas.com
       - {{ $ing.host }}
       secretName: {{ $ing.host }}-cert
   {{- end }}
