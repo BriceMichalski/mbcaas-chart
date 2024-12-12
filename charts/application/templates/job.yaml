@@ -1,0 +1,28 @@
+{{ $root := . }}
+{{ $default := .Values.default }}
+
+{{- range .Values.jobs }}
+{{- $job := . -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $job.name }}
+spec:
+  template:
+    spec:
+      containers:
+      {{- $mainPod := dict }}
+      {{- $mainPod := set $mainPod "name" $job.name}}
+      {{- $mainPod := set $mainPod "securityContext" $job.securityContext}}
+      {{- $mainPod := set $mainPod "image" $job.image}}
+      {{- $mainPod := set $mainPod "cmd" $job.cmd }}
+      {{- $mainPod := set $mainPod "env" $job.env }}
+      {{- $mainPod := set $mainPod "resources" $job.resources }}
+      {{- $mainPod := set $mainPod "mount" $job.volumes }}
+      {{- include "mbcaas.pod"   (dict "default" $default "pod" $mainPod) | nindent 10 }}
+      restartPolicy: Never
+      {{- with $job.volumes }}
+      {{- include "mbcaas.volumes"   (dict "volumes" .) | nindent 10 }}
+      {{- end }}
+  backoffLimit: {{ $job.backoffLimit }}
+{{- end }}

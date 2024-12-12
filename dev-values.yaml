@@ -1,46 +1,46 @@
-deploys:
-  - name: dummy-app
-    image:
-      repository: nginx
-      pullPolicy: IfNotPresent
-      tag: "latest"
+# deploys:
+#   - name: dummy-app
+#     image:
+#       repository: nginx
+#       pullPolicy: IfNotPresent
+#       tag: "latest"
 
-    replicaCount: 1 # Optional | default: 1
+#     replicaCount: 1 # Optional | default: 1
 
-    resources: # Optional
-      limits:
-        cpu: 100m
-        memory: 128Mi
-      requests:
-        cpu: 100m
-        memory: 128Mi
+#     resources: # Optional
+#       limits:
+#         cpu: 100m
+#         memory: 128Mi
+#       requests:
+#         cpu: 100m
+#         memory: 128Mi
 
-    serviceAccount: # Optional
-      create: true
-      name: dummy-sa
+#     serviceAccount: # Optional
+#       create: true
+#       name: dummy-sa
 
-    service:
-      ports:
-        - port: 80
-          protocol: TCP
-          name: http
+#     service:
+#       ports:
+#         - port: 80
+#           protocol: TCP
+#           name: http
 
-    ingress:
-      - host: poc.dummy.com
-        paths:
-          - path: /
-            type: Prefix
-            port: http
-      - host: poc.mbcaas.com
-        paths:
-          - path: /
-            type: Prefix
-            port: http
+#     ingress:
+#       - host: poc.dummy.com
+#         paths:
+#           - path: /
+#             type: Prefix
+#             port: http
+#       - host: poc.mbcaas.com
+#         paths:
+#           - path: /
+#             type: Prefix
+#             port: http
 
-secrets:
-  api-creds:
-    annotations:
-      replicator.v1.mittwald.de/replication-allowed: "true"
-    stringData:
-      auth_user: AdminJohnDoe
-      auth_password: 6EQUJ5wow!
+# secrets:
+#   api-creds:
+#     annotations:
+#       replicator.v1.mittwald.de/replication-allowed: "true"
+#     stringData:
+#       auth_user: AdminJohnDoe
+#       auth_password: 6EQUJ5wow!
