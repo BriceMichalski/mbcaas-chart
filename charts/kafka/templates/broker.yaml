@@ -1,23 +1,51 @@
 apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaNodePool
+metadata:
+  name: nodepool
+  labels:
+    strimzi.io/cluster: {{ .Values.cluster.name }}
+spec:
+  replicas: {{ .Values.cluster.instance.replicas }}
+  roles:
+    - controller
+    - broker
+  storage:
+    type: jbod
+    volumes:
+      - id: 0
+        type: persistent-claim
+        size: {{ .Values.cluster.instance.storage.size | quote }}
+        class: {{ .Values.cluster.instance.storage.class }}
+        deleteClaim: {{ .Values.cluster.instance.storage.deleteClaim | default false }}
+        kraftMetadata: shared
+---
+apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
   name: {{ .Values.cluster.name }}
+  annotations:
+    strimzi.io/kraft: enabled
+    strimzi.io/node-pools: enabled
 spec:
   kafka:
-    version: {{ .Values.cluster.version }}
+    version: {{ .Values.cluster.version | default "3.8.0" }}
     replicas: {{ .Values.cluster.instance.replicas }}
+    {{- with .Values.cluster.instance.resources }}
     resources:
-      {{- .Values.cluster.instance.resources | toYaml | nindent 6 }}
+      {{- . | toYaml | nindent 6 }}
+    {{- end }}
     listeners:
       - name: plain
         port: 9092
         type: internal
         tls: false
-      {{- with .Values.cluster.extraListeners -}}
-      {{ . | toYaml | nindent 6}}
+      {{- with .Values.cluster.extraListeners }}
+      {{- . | toYaml | nindent 6 }}
       {{- end }}
+    {{- with .Values.cluster.config }}
     config:
-      {{- .Values.cluster.config | toYaml | nindent 6 }}
+      {{- . | toYaml | nindent 6 }}
+    {{- end }}
     storage:
       type: jbod
       volumes:
@@ -25,30 +53,19 @@ spec:
           type: persistent-claim
           size: {{ .Values.cluster.instance.storage.size | quote }}
           class: {{ .Values.cluster.instance.storage.class }}
-          deleteClaim: true
-  zookeeper:
-    replicas: 1
-    resources:
-      requests:
-        memory: 200Mi
-        cpu: 200m
-      limits:
-        memory: 400Mi
-        cpu: 400m
-    config:
-      autopurge.snapRetainCount: 3
-      autopurge.purgeInterval: 2
-    storage:
-      type: persistent-claim
-      size: {{ .Values.cluster.zookeeper.storage.size | quote }}
-      class: {{ .Values.cluster.zookeeper.storage.class }}
-      deleteClaim: true
+          deleteClaim: {{ .Values.cluster.instance.storage.deleteClaim | default false }}
   entityOperator:
-    userOperator: null
-    {{- with .Values.cluster.operatorResources.topicOperator  }}
+    {{- with .Values.cluster.operatorResources.topicOperator }}
     topicOperator:
       resources:
         {{- . | toYaml | nindent 8 }}
+    {{- end }}
+    {{- with .Values.cluster.operatorResources.userOperator }}
+    userOperator:
+      resources:
+        {{- . | toYaml | nindent 8 }}
+    {{- else }}
+    userOperator: {}
     {{- end }}
     {{- with .Values.cluster.operatorResources.tlsSidecar }}
     tlsSidecar:
