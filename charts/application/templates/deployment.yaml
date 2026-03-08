@@ -34,6 +34,9 @@ spec:
       serviceAccountName: {{ include "mbcaas.serviceAccountName" (dict "appName" $deploy.name "serviceAccount" $deploy.serviceAccount )}}
       securityContext:
         {{- toYaml $deploy.podSecurityContext | nindent 8 }}
+      {{- if hasKey $deploy "enableServiceLinks" }}
+      enableServiceLinks: {{ $deploy.enableServiceLinks }}
+      {{- end }}
       containers:
         {{- $mainPod := dict -}}
 

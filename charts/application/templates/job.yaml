@@ -14,6 +14,9 @@ spec:
       imagePullSecrets:
         - name: {{ . }}
       {{- end }}
+      {{- if hasKey $job "enableServiceLinks" }}
+      enableServiceLinks: {{ $job.enableServiceLinks }}
+      {{- end }}
       containers:
       {{- $mainPod := dict }}
       {{- $mainPod := set $mainPod "name" $job.name}}

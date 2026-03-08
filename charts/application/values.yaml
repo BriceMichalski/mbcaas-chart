@@ -30,6 +30,8 @@ default:
 #       cpu: 100m
 #       memory: 128Mi
 
+#   enableServiceLinks: false # Optional | default: true (kubernetes default)
+
 #   serviceAccount: # Optional
 #     create: true
 #     name: dummy-sa
