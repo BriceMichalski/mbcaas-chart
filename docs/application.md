@@ -123,6 +123,8 @@ deploys:
 
     replicaCount: 1 # Optional | default: 1
 
+    enableServiceLinks: false # Optional | default: true - Disable Kubernetes service environment variable injection into the pod
+
     # Container command
     cmd:
       shell: "/bin/bash"
@@ -195,6 +197,7 @@ deploys:
 cronjobs:
   - name: influx-backup
     cron: "* * * * *" # Cron got job trigger
+    enableServiceLinks: false # Optional | default: true
     image:
       repository: alpine
       pullPolicy: IfNotPresent
@@ -228,6 +231,7 @@ jobs:
       tag: 3.19
 
     backoffLimit: 2        # 2 retries
+    enableServiceLinks: false # Optional | default: true
 
     # Override container image command
     cmd: 
