@@ -18,43 +18,44 @@ mbcaas-chart usage sample
 <details>
 <summary><strong>0.16.0</strong></summary>
 
-  - Add `startupProbe` support (alongside existing `liveness` and `readiness`)
-  - Add `PodDisruptionBudget` support (`pdb.minAvailable` / `pdb.maxUnavailable`)
-  - Fix `RollingUpdate` strategy — `maxSurge` and `maxUnavailable` now properly rendered
-  - Documentation added in `values.yaml` and `docs/application.md`
+- Add `startupProbe` support (alongside existing `liveness` and `readiness`)
+- Add `PodDisruptionBudget` support (`pdb.minAvailable` / `pdb.maxUnavailable`)
+- Fix `RollingUpdate` strategy — `maxSurge` and `maxUnavailable` now properly rendered
+- Documentation added in `values.yaml` and `docs/application.md`
 
 </details>
 
 <details>
 <summary><strong>0.14.0</strong></summary>
 
-  - Secret now accept annotations
-  - **!! Breaking !!** Deployment ingress now defined as array.
-    use
+- Secret now accept annotations
+- **!! Breaking !!** Deployment ingress now defined as array.
 
-    ```yaml
-    deploys:
-      # ...
-      ingress:
-      - host: poc.dummy.com
-        paths:
-          - path: /
-            type: Prefix
-            port: http
-    ```
+use:
 
-    instead of
+```yaml
+deploys:
+  # ...
+  ingress:
+  - host: poc.dummy.com
+    paths:
+      - path: /
+        type: Prefix
+        port: http
+```
 
-    ```yaml
-    deploys:
-      # ...
-      ingress:
-        host: poc.dummy.com
-        paths:
-          - path: /
-            type: Prefix
-            port: http
-    ```
+instead of:
+
+```yaml
+deploys:
+  # ...
+  ingress:
+    host: poc.dummy.com
+    paths:
+      - path: /
+        type: Prefix
+        port: http
+```
 
 </details>
 
