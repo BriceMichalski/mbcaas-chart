@@ -15,10 +15,22 @@ mbcaas-chart usage sample
 
 ## Change:
 
-### 0.14.0
+<details>
+<summary><strong>0.16.0</strong></summary>
+
+  - Add `startupProbe` support (alongside existing `liveness` and `readiness`)
+  - Add `PodDisruptionBudget` support (`pdb.minAvailable` / `pdb.maxUnavailable`)
+  - Fix `RollingUpdate` strategy — `maxSurge` and `maxUnavailable` now properly rendered
+  - Documentation added in `values.yaml` and `docs/application.md`
+
+</details>
+
+<details>
+<summary><strong>0.14.0</strong></summary>
+
   - Secret now accept annotations
-  - **!! Breaking !!** Deployment ingress now defined as array.  
-    use  
+  - **!! Breaking !!** Deployment ingress now defined as array.
+    use
 
     ```yaml
     deploys:
@@ -31,8 +43,8 @@ mbcaas-chart usage sample
             port: http
     ```
 
-    instead of  
-    
+    instead of
+
     ```yaml
     deploys:
       # ...
@@ -43,6 +55,8 @@ mbcaas-chart usage sample
             type: Prefix
             port: http
     ```
+
+</details>
 
 ## Regcreds
 
