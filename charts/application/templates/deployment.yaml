@@ -13,8 +13,14 @@ spec:
   {{- if not $deploy.autoscaling }}
   replicas: {{ $deploy.replicaCount | default $default.replicaCount }}
   {{- end }}
+  {{- $strategyType := $deploy.strategy | default $default.strategy }}
   strategy:
-    type: {{ $deploy.strategy | default $default.strategy }}
+    type: {{ $strategyType }}
+    {{- if eq $strategyType "RollingUpdate" }}
+    rollingUpdate:
+      maxSurge: {{ $deploy.maxSurge | default ($default.maxSurge | default "25%") }}
+      maxUnavailable: {{ $deploy.maxUnavailable | default ($default.maxUnavailable | default "25%") }}
+    {{- end }}
   selector:
     matchLabels:
       {{- include "mbcaas.selectorLabels" (dict "root" $root "appName" $deploy.name) | nindent 6 }}
@@ -89,8 +95,11 @@ spec:
 {{- range $deploy.ingress }}
 {{- $ingress := . }}
 {{ include "mbcaas.ingress" (dict "root" $root "default" $default "appName" $deploy.name "ingress" $ingress)}}
----
 {{- end }}
+{{- end }}
+---
+{{- if $deploy.pdb }}
+{{ include "mbcaas.poddisruptionbudget" (dict "root" $root "appName" $deploy.name "pdb" $deploy.pdb)}}
 {{- end }}
 ---
 {{- end }}

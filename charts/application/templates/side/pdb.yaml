@@ -1,0 +1,23 @@
+{{ define "mbcaas.poddisruptionbudget" }}
+{{- $pdb := .pdb }}
+{{- $root := .root }}
+{{- $appName := .appName }}
+{{- if $pdb }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "mbcaas.fullname" (dict "appName" $appName) }}
+  labels:
+    {{- include "mbcaas.labels" (dict "root" $root "appName" $appName) | nindent 4 }}
+spec:
+  {{- if hasKey $pdb "minAvailable" }}
+  minAvailable: {{ $pdb.minAvailable }}
+  {{- end }}
+  {{- if hasKey $pdb "maxUnavailable" }}
+  maxUnavailable: {{ $pdb.maxUnavailable }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "mbcaas.selectorLabels" (dict "root" $root "appName" $appName) | nindent 6 }}
+{{- end }}
+{{ end }}

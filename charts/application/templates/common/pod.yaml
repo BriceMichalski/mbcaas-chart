@@ -42,6 +42,10 @@
     {{- end }}
   {{- end }}
   {{- if $pod.probe -}}
+  {{- with (default $pod.probe.startup false) }}
+  startupProbe:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   {{- with (default $pod.probe.liveness false) }}
   livenessProbe:
     {{- toYaml . | nindent 4 }}

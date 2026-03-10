@@ -2,6 +2,8 @@ default:
   probe: {}
   replicaCount: 1
   strategy: Recreate
+  # maxSurge: 25%      # RollingUpdate only
+  # maxUnavailable: 25% # RollingUpdate only
   resources:
     limits:
       cpu: 100m
@@ -22,6 +24,10 @@ default:
 
 #   replicaCount: 1 # Optional | default: 1
 
+#   strategy: RollingUpdate # Optional | default: Recreate | Can be 'Recreate' or 'RollingUpdate'
+#   maxSurge: 25%           # Optional | default: 25% | RollingUpdate only - extra pods during rollout (int or percentage)
+#   maxUnavailable: 25%     # Optional | default: 25% | RollingUpdate only - max pods unavailable during rollout (int or percentage)
+
 #   resources: # Optional
 #     limits:
 #       cpu: 100m
@@ -41,6 +47,30 @@ default:
 #     - port: 80
 #       protocol: TCP
 #       name: http
+
+#   pdb: # Optional - PodDisruptionBudget
+#     minAvailable: 1   # min pods available (int or percentage e.g. "50%")
+#     # maxUnavailable: 1 # OR max pods unavailable (mutually exclusive with minAvailable)
+
+#   probe: # Optional - Health probes
+#     startup:                  # Delays liveness/readiness until app is ready to start. Checked until success then disabled.
+#       httpGet:
+#         path: /health
+#         port: 8080
+#       failureThreshold: 30    # Allow up to 30*10s = 5min to start
+#       periodSeconds: 10
+#     liveness:                 # Restarts the container if it fails
+#       httpGet:
+#         path: /health
+#         port: 8080
+#       initialDelaySeconds: 10
+#       periodSeconds: 10
+#     readiness:                # Removes pod from service endpoints if it fails
+#       httpGet:
+#         path: /ready
+#         port: 8080
+#       initialDelaySeconds: 5
+#       periodSeconds: 5
 
 #   ingress:
 #     admin: false
