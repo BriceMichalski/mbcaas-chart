@@ -15,7 +15,7 @@ mbcaas-chart usage sample
 
 ## Change:
 
-<details>
+<details markdown="1">
 <summary><strong>0.16.0</strong></summary>
 
 - Add `startupProbe` support (alongside existing `liveness` and `readiness`)
@@ -25,7 +25,7 @@ mbcaas-chart usage sample
 
 </details>
 
-<details>
+<details markdown="1">
 <summary><strong>0.14.0</strong></summary>
 
 - Secret now accept annotations
