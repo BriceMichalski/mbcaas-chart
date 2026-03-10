@@ -10,14 +10,27 @@ mbcaas-chart usage sample
 - [ConfigMap](#configmap)
 - [Volumes](#pvc)
 - [Deployment](#deployment)
+  - [Probes](#probes)
 - [CronJob](#cronjob)
 
 ## Change:
 
-### 0.14.0
+<details>
+<summary><strong>0.16.0</strong></summary>
+
+  - Add `startupProbe` support (alongside existing `liveness` and `readiness`)
+  - Add `PodDisruptionBudget` support (`pdb.minAvailable` / `pdb.maxUnavailable`)
+  - Fix `RollingUpdate` strategy — `maxSurge` and `maxUnavailable` now properly rendered
+  - Documentation added in `values.yaml` and `docs/application.md`
+
+</details>
+
+<details>
+<summary><strong>0.14.0</strong></summary>
+
   - Secret now accept annotations
-  - **!! Breaking !!** Deployment ingress now defined as array.  
-    use  
+  - **!! Breaking !!** Deployment ingress now defined as array.
+    use
 
     ```yaml
     deploys:
@@ -30,8 +43,8 @@ mbcaas-chart usage sample
             port: http
     ```
 
-    instead of  
-    
+    instead of
+
     ```yaml
     deploys:
       # ...
@@ -42,6 +55,8 @@ mbcaas-chart usage sample
             type: Prefix
             port: http
     ```
+
+</details>
 
 ## Regcreds
 
@@ -115,7 +130,9 @@ Allow you to define and configure workload
 deploys:
   - name: dummy-app
     imagePullSecrets: ghcr-personnal-token
-    startegy: Recreate # Can be 'Recreate' or 'RollingUpdate'. default: 'Recreate'. nb: RollingUpdate may not be possible if namespace quota do not permit to create a new pod
+    strategy: RollingUpdate # Optional | default: 'Recreate' | Can be 'Recreate' or 'RollingUpdate'. nb: RollingUpdate may not be possible if namespace quota do not permit to create a new pod
+    maxSurge: 1             # Optional | default: 25% | RollingUpdate only - extra pods created during rollout (int or percentage)
+    maxUnavailable: 0       # Optional | default: 25% | RollingUpdate only - max pods unavailable during rollout (int or percentage)
     image:
       repository: ghcr.io/johndoe/johndoe/dummy-app
       pullPolicy: IfNotPresent
@@ -181,6 +198,37 @@ deploys:
           protocol: TCP
           name: http
 
+    # PodDisruptionBudget - protects pods during voluntary disruptions (node drain, maintenance)
+    pdb:                    # Optional
+      minAvailable: 1       # Min pods that must remain available (int or percentage e.g. "50%")
+      # maxUnavailable: 1   # OR max pods that can be unavailable - mutually exclusive with minAvailable
+
+    # Health probes (Optional)
+    # startup: checked at boot until success, then disabled. Blocks liveness/readiness during init.
+    # liveness: restarts the container if it fails continuously.
+    # readiness: removes the pod from Service endpoints if it fails.
+    probe:
+      startup:
+        httpGet:
+          path: /health
+          port: 8080
+        failureThreshold: 30  # 30 * periodSeconds = max boot time before considered failed
+        periodSeconds: 10
+      liveness:
+        httpGet:
+          path: /health
+          port: 8080
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        failureThreshold: 3
+      readiness:
+        httpGet:
+          path: /ready
+          port: 8080
+        initialDelaySeconds: 5
+        periodSeconds: 5
+        failureThreshold: 3
+
     # Service www exposition
     ingress:
       - host: poc.dummy.com
@@ -190,6 +238,43 @@ deploys:
             port: http
 ```
 
+
+## Probes
+
+| Probe | Rôle | Comportement en cas d'échec |
+|-------|------|-----------------------------|
+| `startup` | Attend que l'app soit prête au démarrage. Bloque liveness et readiness le temps qu'elle réussisse. | Tue le container si `failureThreshold` est dépassé |
+| `liveness` | Vérifie que l'app tourne correctement. | Redémarre le container |
+| `readiness` | Vérifie que l'app peut recevoir du trafic. | Retire le pod des endpoints du Service |
+
+Chaque probe accepte la syntaxe Kubernetes standard : `httpGet`, `tcpSocket`, `exec`, ainsi que les champs `initialDelaySeconds`, `periodSeconds`, `timeoutSeconds`, `failureThreshold`, `successThreshold`.
+
+```yaml
+deploys:
+  - name: dummy-app
+    # ...
+    probe:
+      startup:
+        httpGet:
+          path: /health
+          port: 8080
+        failureThreshold: 30   # 30 * 10s = 5 min max pour démarrer
+        periodSeconds: 10
+      liveness:
+        httpGet:
+          path: /health
+          port: 8080
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        failureThreshold: 3
+      readiness:
+        httpGet:
+          path: /ready
+          port: 8080
+        initialDelaySeconds: 5
+        periodSeconds: 5
+        failureThreshold: 3
+```
 
 ## Cronjob
 
